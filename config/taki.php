@@ -11,15 +11,16 @@
  */
 
 return [
-    /*
-     * Is the `username` field available for a user?
-     */
-    'username.available'           => true,
 
     /*
      * Is the `username` field required when registering new account?
      */
     'username.required'            => true,
+
+    /**
+     * Validate a username
+     */
+    'username.validator'           => 'required|min:3|max:50',
 
     /*
      * Which field is used when authenticating user.
@@ -28,6 +29,21 @@ return [
      * Default value: both
      */
     'login_by'                     => 'both',
+
+    /*
+     * The name of the `username` field
+     */
+    'field.username'               => 'username',
+
+    /*
+     * The name of the `email` field
+     */
+    'field.email'                  => 'email',
+
+    /*
+     * The name of the key of input array when user want to login by username or email
+     */
+    'field.both'                   => 'login',
 
     /*
      * If this config is set to true, when users changed their emails, all
@@ -54,7 +70,15 @@ return [
      * How to get the username from the information that social provider
      * returns to us?
      */
-    'social.username_callback'     => function ($user) {
+    'social.username_callback'     => function ($user)
+    {
         return '';
     },
+
+    /*
+     * Generate the username automatically from the user information from
+     * social provider or force user to enter their username
+     */
+    'social.username_auto'         => true,
+
 ];
