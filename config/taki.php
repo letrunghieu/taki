@@ -31,6 +31,13 @@ return [
     'login_by'                     => 'both',
 
     /*
+     * Does user need to confirm their email after creating account, if the
+     * email do not need to verified, they will be logged in right after
+     * registered.
+     */
+    'confirm_after_created'        => true,
+
+    /*
      * The name of the `username` field
      */
     'field.username'               => 'username',
@@ -80,5 +87,10 @@ return [
      * social provider or force user to enter their username
      */
     'social.username_auto'         => true,
+
+    /*
+     * The view name of password reset email
+     */
+    'emails.password_reset'        => 'emails.password_reset',
 
 ];
