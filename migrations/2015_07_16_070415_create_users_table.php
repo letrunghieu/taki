@@ -30,6 +30,7 @@ class CreateUsersTable extends Migration
             if (config('taki.confirm_after_created'))
             {
                 $table->string('token')->nullable();
+                $table->boolean('is_activated')->default(false);
             }
             $table->rememberToken();
             $table->timestamps();
