@@ -36,6 +36,8 @@ class TakiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->singleton('taki', function ($app) {
+            return new Auth($app['auth']);
+        });
     }
 }

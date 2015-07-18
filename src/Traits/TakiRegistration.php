@@ -1,10 +1,12 @@
 <?php
 
-namespace HieuLe\Taki;
+namespace HieuLe\Taki\Traits;
 
 use App\User;
 use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Taki registration trait.
@@ -37,28 +39,26 @@ trait TakiRegistration
      */
     public function postRegister(Request $request)
     {
-        $validator = $this->validator($request->all());
+        $validator = $this->validateCreating($request->all());
 
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             $this->throwValidationException(
                 $request, $validator
             );
         }
 
         $user = $this->create($request->all());
-        if (config('taki.confirm_after_created'))
-        {
+        if (config('taki.confirm_after_created')) {
             $token = app('auth.password.tokens')->createNewToken();
             $user->is_activated = 0;
             $user->token = $token;
             $user->save();
-            $this->mailer->send(config('taki.emails.password_reset'), compact('token', 'user'), function ($m) use ($user, $token)
-            {
-                $m->to($user->getEmailForPasswordReset());
-            });
-        } else
-        {
+            Mail::queue(config('taki.emails.activate'), compact('token', 'user'),
+                function ($m) use ($user, $token) {
+                    $m->subject(config('taki.emails.activate_subject'));
+                    $m->to($user->getEmailForPasswordReset());
+                });
+        } else {
             Auth::login($user);
         }
 
@@ -78,10 +78,13 @@ trait TakiRegistration
     {
 
         $user = User::where('token', $token)->first();
-        if (!$user)
-        {
+        if (!$user) {
             throw new NotFoundHttpException;
         }
+
+        $user->is_activated = true;
+        $user->token = null;
+        $user->save();
 
         return view('auth.activate', ['user' => $user]);
     }
@@ -93,8 +96,7 @@ trait TakiRegistration
      */
     protected function getPostRegisterRedirectPath()
     {
-        if (property_exists($this, 'postRegisterRedirect'))
-        {
+        if (property_exists($this, 'postRegisterRedirect')) {
             return $this->postRegisterRedirect;
         }
 

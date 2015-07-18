@@ -1,5 +1,9 @@
 <?php
 
+namespace HieuLe\Taki;
+
+use Illuminate\Auth\AuthManager;
+
 /**
  * Created by PhpStorm.
  * User: Hieu Le
@@ -9,9 +13,15 @@
 class Auth
 {
     /**
-     * @var \Illuminate\Contracts\Auth\Guard
+     * @var AuthManager
      */
     protected $auth;
+
+    function __construct(AuthManager $auth)
+    {
+        $this->auth = $auth;
+    }
+
 
     /**
      * Attempt to authenticate a user using the given credentials.

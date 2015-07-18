@@ -17,48 +17,40 @@ return [
         /*
          * Is the `username` field required when registering new account?
          */
-        'required'  => true,
-
+        'required'  => false,
         /**
          * Validate a username
          */
         'validator' => 'required|min:3|max:50',
     ],
-
-
     /*
      * Which field is used when authenticating user.
      *
      * Available values: email, username, both
      * Default value: both
      */
-    'login_by'              => 'both',
-
+    'login_by'              => 'email',
     /*
      * Does user need to confirm their email after creating account, if the
      * email do not need to verified, they will be logged in right after
      * registered.
      */
-    'confirm_after_created' => true,
-
+    'confirm_after_created' => false,
     'field'                 => [
 
         /*
          * The name of the `username` field
          */
         'username' => 'username',
-
         /*
          * The name of the `email` field
          */
         'email'    => 'email',
-
         /*
          * The name of the key of input array when user want to login by username or email
          */
         'both'     => 'login',
     ],
-
     'social'                => [
         /*
          * If this config is set to true, when users changed their emails, all
@@ -69,7 +61,6 @@ return [
          * these social account, a new registration is created instead.
          */
         'email_changed_allowed' => true,
-
         /*
          * If the password is required, after successfully authenticated from
          * third party social providers, user need to provide password before
@@ -80,28 +71,44 @@ return [
          * with the email.
          */
         'password_required'     => true,
-
         /*
          * How to get the username from the information that social provider
          * returns to us?
          */
-        'username_callback'     => function ($user)
-        {
+        'username_callback'     => function ($user) {
             return '';
         },
-
         /*
          * Generate the username automatically from the user information from
          * social provider or force user to enter their username
          */
         'username_auto'         => true,
     ],
-
     'emails'                => [
         /*
-         * The view name of password reset email
+         * The view name of account activation email
          */
-        'password_reset' => 'emails.password_reset',
+        'activate'         => 'emails.activate',
+        /**
+         * The subject of the account activation email
+         */
+        'activate_subject' => 'Your account need activating',
+    ],
+    'validator'             => [
+        /*
+         * The validator rules when creating new user
+         */
+        'create' => [
+            'email'                 => 'required|email|unique:users',
+            'password'              => 'required',
+            'password_confirmation' => 'required|same:password',
+        ],
+        /*
+         * The validator rules when updating a user
+         */
+        'update' => [
+
+        ],
     ],
 
 ];
