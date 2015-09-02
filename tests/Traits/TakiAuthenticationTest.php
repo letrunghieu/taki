@@ -20,6 +20,8 @@ class TakiAuthenticationTest extends \HieuLe\Taki\BaseTestCase
      */
     public function testValidationFailed()
     {
+        $c = $this->initConfigService();
+
         $v = $this->initValidatorService();
         $v->expects($this->once())
             ->method('fails')
