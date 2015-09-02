@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
+        "laravel/laravel": "^5.1",
         "laravel/socialite": "^2.0"
     },
     "require-dev": {
@@ -25,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "HieuLe\\Taki\\": "src/"
+            "HieuLe\\Taki\\": ["src/", "tests/"]
         }
     },
     "minimum-stability": "dev",
