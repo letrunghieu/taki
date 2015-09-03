@@ -42,7 +42,9 @@ class Auth
      */
     public function attempt(array $credentials = [], $remember = false, $login = true)
     {
-        if (isset($credentials[config('taki.field.both')])) {
+        // we do thing if the user is allowed to login with only username or
+        // only password
+        if ((config('taki.login_by') == 'both') && isset($credentials[config('taki.field.both')])) {
             $login = $credentials[config('taki.field.both')];
             unset($credentials[config('taki.field.both')]);
             if (isset($credentials[config('taki.field.username')])) {
