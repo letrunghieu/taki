@@ -5,6 +5,7 @@ namespace HieuLe\Taki\Traits;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use HieuLe\Taki\Stubs\Controller;
+use HieuLe\Taki\TakiFacade;
 
 /**
  * Description of TakiAuthenticationTest
@@ -94,5 +95,41 @@ class TakiAuthenticationTest extends \HieuLe\Taki\BaseTestCase
         $c->loginPath = '/custom/login/path';
         $res          = $c->postLogin($request);
         $this->assertEquals('/custom/login/path', $res->getTargetUrl());
+    }
+
+    /**
+     * After logging in successfully, redirect the user to the intended url
+     */
+    public function testLoginSuccess()
+    {
+        $a = $this->initAuthService();
+        TakiFacade::shouldReceive('attempt')
+            ->andReturn(true);
+        $this->initConfigService();
+
+        $v = $this->initValidatorService();
+        $v->expects($this->exactly(1))
+            ->method('fails')
+            ->willReturn(false);
+
+        $rl = $this->initRateLimiterService();
+        $rl->expects($this->exactly(1))
+            ->method('tooManyAttempts')
+            ->willReturn(false);
+
+        $request = $this->getMock(Request::class);
+        $request->expects($this->any())
+            ->method('all')
+            ->willReturn([]);
+        $request->expects($this->any())
+            ->method('only')
+            ->willReturn([]);
+
+        $this->initRedirectorService();
+
+        $c   = new Controller;
+        $res = $c->postLogin($request);
+        $this->assertInstanceOf(RedirectResponse::class, $res);
+        $this->assertEquals('url.intended', $res->getTargetUrl());
     }
 }

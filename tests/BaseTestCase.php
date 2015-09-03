@@ -11,6 +11,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
+use Illuminate\Auth\AuthManager;
 
 /**
  * Description of BaseTestCase
@@ -27,6 +28,12 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @var Filesystem;
      */
     protected $fs;
+
+    /**
+     *
+     * @var Application
+     */
+    protected $app;
 
     protected function setUp()
     {
@@ -49,6 +56,8 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
                     throw new \RuntimeException("Cannot find the mock object of '{$name}'.");
                 }
             });
+
+        $this->app = $app;
     }
 
     protected function tearDown()
@@ -135,11 +144,28 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         $s->expects($this->any())
             ->method('get')
             ->willReturnArgument(1);
+        $s->expects($this->any())
+            ->method('pull')
+            ->willReturnArgument(0);
         $r->setSession($s);
 
         $this->aliases['redirect'] = $r;
 
         return $r;
+    }
+
+    protected function initAuthService()
+    {
+        $auth = $this->getMockBuilder(AuthManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        TakiFacade::setFacadeApplication($this->app);
+        TakiFacade::swap(new Auth($auth));
+        
+        class_alias(TakiFacade::class, '\Taki');
+        
+        return $auth;
     }
 
     /**
