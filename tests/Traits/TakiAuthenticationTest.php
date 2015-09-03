@@ -3,6 +3,7 @@
 namespace HieuLe\Taki\Traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use HieuLe\Taki\Stubs\Controller;
 
 /**
@@ -14,13 +15,37 @@ class TakiAuthenticationTest extends \HieuLe\Taki\BaseTestCase
 {
 
     /**
+     * Test getting correct field name for login(username/email/login)
+     */
+    public function testGetLoginUsername()
+    {
+        $this->initConfigService();
+        $c = new Controller;
+
+        // default config
+        $this->assertEquals('email', $c->loginUsername());
+
+        // login by username or email
+        config(['taki.login_by' => 'both']);
+        $this->assertEquals('login', $c->loginUsername());
+
+        // login by username
+        config(['taki.login_by' => 'username']);
+        $this->assertEquals('username', $c->loginUsername());
+
+        // custom field name
+        config(['taki.field.username' => 'input_email']);
+        $this->assertEquals('input_email', $c->loginUsername());
+    }
+
+    /**
      * Test controller return a redirect if validation failed
      * 
      * @expectedException \Illuminate\Http\Exception\HttpResponseException
      */
     public function testValidationFailed()
     {
-        $c = $this->initConfigService();
+        $this->initConfigService();
 
         $v = $this->initValidatorService();
         $v->expects($this->once())
@@ -34,5 +59,40 @@ class TakiAuthenticationTest extends \HieuLe\Taki\BaseTestCase
 
         $c = new Controller;
         $c->postLogin($request);
+    }
+
+    /**
+     * If there are too many login attempts, a redirect response is returned 
+     * with the target URL is set in the `loginPath` property of the controller.
+     */
+    public function testTooManyLoginAttempts()
+    {
+        $this->initConfigService();
+
+        $v = $this->initValidatorService();
+        $v->expects($this->exactly(2))
+            ->method('fails')
+            ->willReturn(false);
+
+        $rl = $this->initRateLimiterService();
+        $rl->expects($this->exactly(2))
+            ->method('tooManyAttempts')
+            ->willReturn(true);
+
+        $request = $this->getMock(Request::class);
+        $request->expects($this->exactly(2))
+            ->method('all')
+            ->willReturn([]);
+
+        $this->initRedirectorService();
+
+        $c   = new Controller;
+        $res = $c->postLogin($request);
+        $this->assertInstanceOf(RedirectResponse::class, $res);
+        $this->assertEquals('/auth/login', $res->getTargetUrl());
+
+        $c->loginPath = '/custom/login/path';
+        $res          = $c->postLogin($request);
+        $this->assertEquals('/custom/login/path', $res->getTargetUrl());
     }
 }

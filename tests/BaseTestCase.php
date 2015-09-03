@@ -5,6 +5,12 @@ namespace HieuLe\Taki;
 use Illuminate\Foundation\Application;
 use Illuminate\Config\Repository;
 use Illuminate\Validation\Validator;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Cache\RateLimiter;
+use Illuminate\Routing\Redirector;
+use Illuminate\Routing\UrlGenerator;
+use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 
 /**
  * Description of BaseTestCase
@@ -16,10 +22,17 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
 
     protected $aliases;
 
+    /**
+     *
+     * @var Filesystem;
+     */
+    protected $fs;
+
     protected function setUp()
     {
         parent::setUp();
         $this->aliases = [];
+        $this->fs      = new Filesystem;
 
         $app = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
@@ -50,8 +63,11 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function initConfigService()
     {
-        $config = $this->getMock(Repository::class, []);
+        $config                  = $this->getMock(Repository::class, null);
         $this->aliases['config'] = $config;
+
+        $config->set(['taki' => $this->readConfigFile()]);
+
         return $config;
     }
 
@@ -76,5 +92,63 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         $this->aliases['Illuminate\Contracts\Validation\Factory'] = $validator;
 
         return $v;
+    }
+
+    /**
+     * 
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function initRateLimiterService()
+    {
+        $rl = $this->getMockBuilder(RateLimiter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->aliases[RateLimiter::class] = $rl;
+
+        return $rl;
+    }
+
+    /**
+     * 
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function initRedirectorService()
+    {
+        $u = $this->getMockBuilder(UrlGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $u->expects($this->any())
+            ->method('to')
+            ->willReturnArgument(0);
+        $u->expects($this->any())
+            ->method('getRequest')
+            ->willReturn(new Request());
+        $r = $this->getMockBuilder(Redirector::class)
+            ->setConstructorArgs([$u])
+            ->setMethods(null)
+            ->getMock();
+
+        $s = $this->getMockBuilder(Store::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $s->expects($this->any())
+            ->method('get')
+            ->willReturnArgument(1);
+        $r->setSession($s);
+
+        $this->aliases['redirect'] = $r;
+
+        return $r;
+    }
+
+    /**
+     * Return the default config from file
+     * 
+     * @return array
+     */
+    protected function readConfigFile()
+    {
+        return $this->fs->getRequire(__DIR__ . '/../config/taki.php');
     }
 }

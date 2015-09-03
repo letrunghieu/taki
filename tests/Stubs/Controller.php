@@ -24,4 +24,10 @@ class Controller
     {
         throw new HttpResponseException(new \Illuminate\Http\RedirectResponse('foo'));
     }
+    
+    protected function getLockoutErrorMessage($seconds)
+    {
+        return '';
+    }
+    
 }
