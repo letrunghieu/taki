@@ -77,7 +77,7 @@ trait TakiRegistration
             $this->userRegistered($request, $token, $user);
         }
 
-        return view('auth.activate', ['user' => $user]);
+        return view($this->getUserActivatingView(), ['user' => $user, 'token' => $token]);
     }
 
     /**
@@ -110,5 +110,14 @@ trait TakiRegistration
         }
 
         return $rules;
+    }
+
+    protected function getUserActivatingView()
+    {
+        if (property_exists($this, 'activated_view')) {
+            return $this->activated_view;
+        } else {
+            return 'auth.activate';
+        }
     }
 }
