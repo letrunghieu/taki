@@ -2,6 +2,7 @@
 
 namespace HieuLe\Taki;
 
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Config\Repository;
 use Illuminate\Validation\Validator;
@@ -143,15 +144,7 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
             ->setMethods(null)
             ->getMock();
 
-        $s = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $s->expects($this->any())
-            ->method('get')
-            ->willReturnArgument(1);
-        $s->expects($this->any())
-            ->method('pull')
-            ->willReturnArgument(0);
+        $s = new Store('test', new NullSessionHandler());
         $r->setSession($s);
 
         $this->aliases['redirect'] = $r;
@@ -168,9 +161,11 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         $auth = $this->getMockBuilder(AuthManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        
+        $s = new Store('test', new NullSessionHandler());
 
         TakiFacade::setFacadeApplication($this->app);
-        TakiFacade::swap(new Auth($auth));
+        TakiFacade::swap(new Auth($auth, $s));
 
         if (!class_exists('\Taki')) {
             class_alias(TakiFacade::class, '\Taki');
@@ -226,6 +221,12 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         }
 
         return $s;
+    }
+    
+    protected function initUserModel() {
+        if (!class_exists('\User')) {
+            class_alias(Stubs\User::class, '\User');
+        }
     }
 
     /**

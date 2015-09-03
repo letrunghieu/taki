@@ -13,6 +13,8 @@ use Illuminate\Contracts\Auth\CanResetPassword;
  */
 class User implements Authenticatable, Authorizable, CanResetPassword
 {
+    
+    public static $first = true;
 
     public function can($ability, $arguments = array())
     {
@@ -51,6 +53,16 @@ class User implements Authenticatable, Authorizable, CanResetPassword
 
     public static function save()
     {
-        
+        return true;
+    }
+
+    public static function where($a, $b)
+    {
+        return new static;
+    }
+
+    public function first()
+    {
+        return static::$first;
     }
 }

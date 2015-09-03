@@ -9,7 +9,6 @@
  * Date: 7/15/2015
  * Time: 1:42 PM
  */
-
 return [
 
 
@@ -53,15 +52,6 @@ return [
     ],
     'social'                => [
         /*
-         * If this config is set to true, when users changed their emails, all
-         * links from social accounts will be kept so that they can still log
-         * in by these social accounts.
-         *
-         * Otherwise, all old links will be deleted. When they logging in by
-         * these social account, a new registration is created instead.
-         */
-        'email_changed_allowed' => true,
-        /*
          * If the password is required, after successfully authenticated from
          * third party social providers, user need to provide password before
          * their account can be created.
@@ -70,19 +60,12 @@ return [
          * password. They can provide password later if they want to login
          * with the email.
          */
-        'password_required'     => true,
-        /*
-         * How to get the username from the information that social provider
-         * returns to us?
-         */
-        'username_callback'     => function ($user) {
-            return '';
-        },
+        'password_required' => false,
         /*
          * Generate the username automatically from the user information from
          * social provider or force user to enter their username
          */
-        'username_auto'         => true,
+        'username_auto'     => true,
     ],
     'emails'                => [
         /*
@@ -107,8 +90,6 @@ return [
          * The validator rules when updating a user
          */
         'update' => [
-
         ],
     ],
-
 ];

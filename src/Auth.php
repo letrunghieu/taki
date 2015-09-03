@@ -3,6 +3,7 @@
 namespace HieuLe\Taki;
 
 use Illuminate\Auth\AuthManager;
+use Illuminate\Session\Store;
 
 /**
  * Created by PhpStorm.
@@ -12,16 +13,23 @@ use Illuminate\Auth\AuthManager;
  */
 class Auth
 {
+
     /**
      * @var AuthManager
      */
     protected $auth;
 
-    function __construct(AuthManager $auth)
-    {
-        $this->auth = $auth;
-    }
+    /**
+     *
+     * @var Store 
+     */
+    protected $session;
 
+    function __construct(AuthManager $auth, Store $store)
+    {
+        $this->auth    = $auth;
+        $this->session = $store;
+    }
 
     /**
      * Attempt to authenticate a user using the given credentials.
@@ -34,27 +42,41 @@ class Auth
      */
     public function attempt(array $credentials = [], $remember = false, $login = true)
     {
-        if (isset($credentials[config('taki.field.both')]))
-        {
+        if (isset($credentials[config('taki.field.both')])) {
             $login = $credentials[config('taki.field.both')];
             unset($credentials[config('taki.field.both')]);
-            if (isset($credentials[config('taki.field.username')]))
-            {
+            if (isset($credentials[config('taki.field.username')])) {
                 unset($credentials[config(['taki.field.username'])]);
             }
-            if (isset($credentials[config('taki.field.email')]))
-            {
+            if (isset($credentials[config('taki.field.email')])) {
                 unset($credentials[config('taki.field.email')]);
             }
-            if (filter_var($login, FILTER_VALIDATE_EMAIL))
-            {
+            if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
                 $credentials[config('taki.field.email')] = $login;
-            } else
-            {
+            } else {
                 $credentials[config('taki.field.username')] = $login;
             }
         }
 
         return $this->auth->attempt($credentials, $remember, $login);
+    }
+
+    public function saveOauthUser($provider, $email)
+    {
+        $this->session->put("{$provider}_{$email}", \Carbon\Carbon::now());
+    }
+
+    public function checkOauthUser($provider, $email)
+    {
+        if ($this->session->has("{$provider}_{$email}")) {
+            $dt   = $this->session->get("{$provider}_{$email}");
+            $diff = \Carbon\Carbon::now()->diffInMinutes($dt, false);
+            return ($diff >= 0) && ($diff <= config('taki.social.ttl'));
+        }
+    }
+
+    public function clearOauthUser($provider, $email)
+    {
+        $this->session->forget("{$provider}_{$email}");
     }
 }

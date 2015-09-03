@@ -132,7 +132,7 @@ class TakiAuthenticationTest extends BaseTestCase
         $c   = new Controller;
         $res = $c->postLogin($request);
         $this->assertInstanceOf(RedirectResponse::class, $res);
-        $this->assertEquals('url.intended', $res->getTargetUrl());
+        $this->assertEquals('/home', $res->getTargetUrl());
     }
 
     /**
