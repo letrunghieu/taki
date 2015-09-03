@@ -30,4 +30,9 @@ class Controller
         return '';
     }
     
+    protected function getFailedLoginMessage()
+    {
+        return '';
+    }
+    
 }

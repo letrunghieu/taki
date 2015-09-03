@@ -4,6 +4,7 @@ namespace HieuLe\Taki\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use HieuLe\Taki\Stubs\NoThrottleController;
 use HieuLe\Taki\Stubs\Controller;
 use HieuLe\Taki\TakiFacade;
 
@@ -131,5 +132,83 @@ class TakiAuthenticationTest extends \HieuLe\Taki\BaseTestCase
         $res = $c->postLogin($request);
         $this->assertInstanceOf(RedirectResponse::class, $res);
         $this->assertEquals('url.intended', $res->getTargetUrl());
+    }
+
+    /**
+     * When attempt login failed, increase the number of login attempts and
+     * redirect to the login page
+     */
+    public function testLoginAttemptsIncreased()
+    {
+        $a = $this->initAuthService();
+        TakiFacade::shouldReceive('attempt')
+            ->andReturn(false);
+        $this->initConfigService();
+
+        $v = $this->initValidatorService();
+        $v->expects($this->exactly(1))
+            ->method('fails')
+            ->willReturn(false);
+
+        $rl = $this->initRateLimiterService();
+        $rl->expects($this->exactly(1))
+            ->method('tooManyAttempts')
+            ->willReturn(false);
+
+        $request = $this->getMock(Request::class);
+        $request->expects($this->any())
+            ->method('all')
+            ->willReturn([]);
+        $request->expects($this->any())
+            ->method('only')
+            ->willReturn([]);
+
+        $this->initRedirectorService();
+
+        $rl->expects($this->once())
+            ->method('hit');
+
+        $c   = new Controller;
+        $res = $c->postLogin($request);
+        $this->assertInstanceOf(RedirectResponse::class, $res);
+        $this->assertEquals('/auth/login', $res->getTargetUrl());
+    }
+
+    /**
+     * Test working without ThrottlesLogins trait
+     */
+    public function testNoThrottle()
+    {
+        $a = $this->initAuthService();
+        TakiFacade::shouldReceive('attempt')
+            ->andReturn(false);
+        $this->initConfigService();
+
+        $v = $this->initValidatorService();
+        $v->expects($this->exactly(1))
+            ->method('fails')
+            ->willReturn(false);
+
+        $rl = $this->initRateLimiterService();
+        $rl->expects($this->never())
+            ->method('tooManyAttempts');
+
+        $request = $this->getMock(Request::class);
+        $request->expects($this->any())
+            ->method('all')
+            ->willReturn([]);
+        $request->expects($this->any())
+            ->method('only')
+            ->willReturn([]);
+
+        $this->initRedirectorService();
+
+        $rl->expects($this->never())
+            ->method('hit');
+
+        $c   = new NoThrottleController;
+        $res = $c->postLogin($request);
+        $this->assertInstanceOf(RedirectResponse::class, $res);
+        $this->assertEquals('/auth/login', $res->getTargetUrl());
     }
 }

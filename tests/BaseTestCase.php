@@ -162,9 +162,11 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
 
         TakiFacade::setFacadeApplication($this->app);
         TakiFacade::swap(new Auth($auth));
-        
-        class_alias(TakiFacade::class, '\Taki');
-        
+
+        if (!class_exists('\Taki')) {
+            class_alias(TakiFacade::class, '\Taki');
+        }
+
         return $auth;
     }
 
