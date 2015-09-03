@@ -137,6 +137,43 @@ class TakiSocialTest extends BaseTestCase
         $this->assertEquals('/oauth/new', $res->getTargetUrl());
     }
 
+    /**
+     * Test that user is created from Oauth authentications with additional
+     * username and/or password.
+     */
+    public function testOauthComplete()
+    {
+        $this->initConfigService();
+
+        $auth = $this->initAuthService();
+
+        \Illuminate\Support\Facades\Auth::swap($auth);
+
+        $rd = $this->initRedirectorService();
+
+        $this->initUserModel();
+        $v = $this->initValidatorService();
+
+        $this->setUpSocial();
+
+        \Taki::saveOauthUser('facebook', 'john@something.com');
+
+        $request = new Request([
+            'username'              => 'john.doe',
+            'email'                 => 'john@something.com',
+            'password'              => '123456',
+            'password_confirmation' => '123456',
+            'provider'              => 'facebook',
+        ]);
+
+        $c = new Controller;
+
+        $res = $c->postOauthComplete($request);
+        $this->assertInstanceOf(RedirectResponse::class, $res);
+        $this->assertEquals('/home', $res->getTargetUrl());
+        $this->assertFalse(\Taki::checkOauthUser($request->get('provider'), $request->get(config('taki.field.email'))));
+    }
+
     protected function setUpSocial()
     {
         $request = $this->getMockBuilder(Request::class)

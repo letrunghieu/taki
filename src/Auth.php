@@ -68,11 +68,7 @@ class Auth
 
     public function checkOauthUser($provider, $email)
     {
-        if ($this->session->has("{$provider}_{$email}")) {
-            $dt   = $this->session->get("{$provider}_{$email}");
-            $diff = \Carbon\Carbon::now()->diffInMinutes($dt, false);
-            return ($diff >= 0) && ($diff <= config('taki.social.ttl'));
-        }
+        return $this->session->has("{$provider}_{$email}");
     }
 
     public function clearOauthUser($provider, $email)

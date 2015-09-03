@@ -2,7 +2,10 @@
 
 namespace HieuLe\Taki\Traits;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Description of TakiSocial
@@ -41,6 +44,7 @@ trait TakiSocial
                 'name'                     => $user->getName(),
                 config('taki.field.email') => $user->getEmail(),
                 'avatar'                   => $user->getAvatar(),
+                'provider'                 => $service,
             ];
 
             if (config('taki.social.password_required') || !config('taki.social.username_auto')) {
@@ -56,6 +60,33 @@ trait TakiSocial
 
         Auth::login($dbUser, true);
         return redirect()->intended();
+    }
+
+    /**
+     * Create user from Oauth services with additional username and/or password.
+     * 
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws NotFoundHttpException
+     */
+    public function postOauthComplete(Request $request)
+    {
+        $rules = array_merge($this->validateCreating(), ['provider' => 'required']);
+
+        $this->validate($request, array_only($rules, $rules));
+        if (!\Taki::checkOauthUser($request->get('provider'), $request->get(config('taki.field.email')))) {
+            throw new NotFoundHttpException;
+        }
+
+        $user = $this->create($request->merge(['is_activated' => 1]));
+        Auth::login($user);
+        \Taki::clearOauthUser($request->get('provider'), $request->get(config('taki.field.email')));
+
+        if (method_exists($this, 'userRegistered')) {
+            $this->userRegistered($request, $user);
+        }
+
+        return redirect($this->getPostRegisterRedirectPath());
     }
 
     protected function getOauthCompletePath()
