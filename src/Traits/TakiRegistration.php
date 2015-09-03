@@ -21,16 +21,6 @@ trait TakiRegistration
     use RedirectsUsers;
 
     /**
-     * Show the application registration form.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getRegister()
-    {
-        return view('auth.register');
-    }
-
-    /**
      * Handle a registration request for the application.
      *
      * @param  \Illuminate\Http\Request $request
@@ -39,27 +29,24 @@ trait TakiRegistration
      */
     public function postRegister(Request $request)
     {
-        $validator = $this->validateCreating($request->all());
-
-        if ($validator->fails()) {
-            $this->throwValidationException(
-                $request, $validator
-            );
-        }
+        $this->validate($request, $this->validateCreating());
 
         $user = $this->create($request->all());
         if (config('taki.confirm_after_created')) {
-            $token = app('auth.password.tokens')->createNewToken();
+            $token              = app('auth.password.tokens')->createNewToken();
             $user->is_activated = 0;
-            $user->token = $token;
+            $user->token        = $token;
             $user->save();
-            Mail::queue(config('taki.emails.activate'), compact('token', 'user'),
-                function ($m) use ($user, $token) {
-                    $m->subject(config('taki.emails.activate_subject'));
-                    $m->to($user->getEmailForPasswordReset());
-                });
+            Mail::queue(config('taki.emails.activate'), compact('token', 'user'), function ($m) use ($user, $token) {
+                $m->subject(config('taki.emails.activate_subject'));
+                $m->to($user->getEmailForPasswordReset());
+            });
         } else {
             Auth::login($user);
+        }
+
+        if (method_exists($this, 'userRegistered')) {
+            $this->userRegistered($request, $user);
         }
 
 
@@ -74,7 +61,7 @@ trait TakiRegistration
      * @return \Illuminate\View\View
      * @throws NotFoundHttpException
      */
-    public function getActivate($token)
+    public function getActivate(Request $request, $token)
     {
 
         $user = User::where('token', $token)->first();
@@ -83,8 +70,12 @@ trait TakiRegistration
         }
 
         $user->is_activated = true;
-        $user->token = null;
+        $user->token        = null;
         $user->save();
+
+        if (method_exists($this, 'userActivated')) {
+            $this->userRegistered($request, $token, $user);
+        }
 
         return view('auth.activate', ['user' => $user]);
     }
@@ -101,5 +92,23 @@ trait TakiRegistration
         }
 
         return $this->redirectPath();
+    }
+
+    /**
+     * get the validation rules when creating user
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function validateCreating()
+    {
+        $rules = config('taki.validator.create', []);
+
+        if (config('taki.username.required') && !array_get($rules, config('taki.field.username'))) {
+            $rules[config('taki.field.username')] = config('taki.username.validator', 'required');
+        }
+
+        return $rules;
     }
 }

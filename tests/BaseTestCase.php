@@ -12,6 +12,9 @@ use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\Passwords\DatabaseTokenRepository;
+use Illuminate\Mail\Mailer;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Description of BaseTestCase
@@ -154,6 +157,10 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         return $r;
     }
 
+    /**
+     * 
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function initAuthService()
     {
         $auth = $this->getMockBuilder(AuthManager::class)
@@ -167,7 +174,40 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
             class_alias(TakiFacade::class, '\Taki');
         }
 
+//        Auth::setFacadeApplication($this->app);
+//        Auth::swap($auth);
+
         return $auth;
+    }
+
+    /**
+     * 
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function initPasswordTokenService()
+    {
+        $pt = $this->getMockBuilder(DatabaseTokenRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->aliases['auth.password.tokens'] = $pt;
+
+        return $pt;
+    }
+
+    /**
+     * 
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function initMailService()
+    {
+        $m = $this->getMockBuilder(Mailer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        Mail::swap($m);
+
+        return $m;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace HieuLe\Taki\Traits;
 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 /**
  * Taki authentication trait
@@ -15,37 +14,6 @@ trait TakiAuthentication
 {
 
     use AuthenticatesUsers;
-    /**
-     * Validate the user information when creating user
-     *
-     * @param array $data
-     *
-     * @return \Illuminate\Validation\Validator
-     */
-    protected function validateCreating(array $data)
-    {
-        $rules = config('taki.validator.create', []);
-
-        if (config('taki.username.required') && !array_get($rules, config('taki.field.username'))) {
-            $rules[config('taki.field.username')] = config('taki.username.validator', 'required');
-        }
-
-        return Validator::make($data, $rules);
-    }
-
-    /**
-     * Validate user information when updating user
-     *
-     * @param array $data
-     *
-     * @return \Illuminate\Validation\Validator
-     */
-    protected function validateUpdating(array $data)
-    {
-        $rules = config('taki.validator.update', []);
-
-        return Validator::make($data, $rules);
-    }
 
     /**
      * Handle a login request to the application.
@@ -84,10 +52,10 @@ trait TakiAuthentication
         }
 
         return redirect($this->loginPath())
-            ->withInput($request->only($this->loginUsername(), 'remember'))
-            ->withErrors([
-                $this->loginUsername() => $this->getFailedLoginMessage(),
-            ]);
+                ->withInput($request->only($this->loginUsername(), 'remember'))
+                ->withErrors([
+                    $this->loginUsername() => $this->getFailedLoginMessage(),
+        ]);
     }
 
     /**
@@ -97,7 +65,7 @@ trait TakiAuthentication
      */
     public function loginUsername()
     {
-        $loginBy = config('taki.login_by');
+        $loginBy    = config('taki.login_by');
         $loginField = config('taki.field.both');
         if ($loginBy === 'email') {
             $loginField = config('taki.field.email');
@@ -107,5 +75,4 @@ trait TakiAuthentication
 
         return $loginField;
     }
-
 }

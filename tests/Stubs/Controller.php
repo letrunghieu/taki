@@ -24,15 +24,19 @@ class Controller
     {
         throw new HttpResponseException(new \Illuminate\Http\RedirectResponse('foo'));
     }
-    
+
     protected function getLockoutErrorMessage($seconds)
     {
         return '';
     }
-    
+
     protected function getFailedLoginMessage()
     {
         return '';
     }
-    
+
+    public function create($input)
+    {
+        return new User();
+    }
 }
