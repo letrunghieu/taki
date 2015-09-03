@@ -7,13 +7,14 @@ use Illuminate\Http\RedirectResponse;
 use HieuLe\Taki\Stubs\NoThrottleController;
 use HieuLe\Taki\Stubs\Controller;
 use HieuLe\Taki\TakiFacade;
+use HieuLe\Taki\BaseTestCase;
 
 /**
  * Description of TakiAuthenticationTest
  *
  * @author Hieu Le <letrunghieu.cse09@gmail.com>
  */
-class TakiAuthenticationTest extends \HieuLe\Taki\BaseTestCase
+class TakiAuthenticationTest extends BaseTestCase
 {
 
     /**

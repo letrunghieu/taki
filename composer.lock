@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2289603d969785262a6e142fbd226107",
+    "hash": "be1a1334f6431ebd65f2f5767eca41de",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -629,16 +629,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.1.12",
+            "version": "v5.1.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "76a9816f37a58383f6ba093ccf08f253e5488555"
+                "reference": "2226a0abfe3776c5023601e59d496784d1de21fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/76a9816f37a58383f6ba093ccf08f253e5488555",
-                "reference": "76a9816f37a58383f6ba093ccf08f253e5488555",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2226a0abfe3776c5023601e59d496784d1de21fd",
+                "reference": "2226a0abfe3776c5023601e59d496784d1de21fd",
                 "shasum": ""
             },
             "require": {
@@ -753,51 +753,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-08-30 23:25:48"
-        },
-        {
-            "name": "laravel/laravel",
-            "version": "v5.1.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/laravel.git",
-                "reference": "716e65268ae088e5bd73e505acf9695c127aff66"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/laravel/zipball/716e65268ae088e5bd73e505acf9695c127aff66",
-                "reference": "716e65268ae088e5bd73e505acf9695c127aff66",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "5.1.*",
-                "php": ">=5.5.9"
-            },
-            "require-dev": {
-                "fzaninotto/faker": "~1.4",
-                "mockery/mockery": "0.9.*",
-                "phpspec/phpspec": "~2.1",
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "project",
-            "autoload": {
-                "classmap": [
-                    "database"
-                ],
-                "psr-4": {
-                    "App\\": "app/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "The Laravel Framework.",
-            "keywords": [
-                "framework",
-                "laravel"
-            ],
-            "time": "2015-08-30 11:31:33"
+            "time": "2015-09-02 16:18:46"
         },
         {
             "name": "laravel/socialite",

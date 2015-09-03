@@ -3,16 +3,17 @@
 namespace HieuLe\Taki\Traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use HieuLe\Taki\Stubs\ValidatingMockController;
 use HieuLe\Taki\Stubs\Controller;
-use Illuminate\Http\RedirectResponse;
+use HieuLe\Taki\BaseTestCase;
 
 /**
  * Description of TakiRegistrationTest
  *
  * @author Hieu Le <hieu@codeforcevina.com>
  */
-class TakiRegistrationTest extends \HieuLe\Taki\BaseTestCase
+class TakiRegistrationTest extends BaseTestCase
 {
 
     // Test getting correct validation rules when create new user

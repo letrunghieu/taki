@@ -15,6 +15,8 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Socialite\SocialiteManager;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * Description of BaseTestCase
@@ -174,9 +176,6 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
             class_alias(TakiFacade::class, '\Taki');
         }
 
-//        Auth::setFacadeApplication($this->app);
-//        Auth::swap($auth);
-
         return $auth;
     }
 
@@ -208,6 +207,25 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         Mail::swap($m);
 
         return $m;
+    }
+
+    /**
+     * 
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function initSocialiteService()
+    {
+        $s = $this->getMockBuilder(SocialiteManager::class)
+            ->setMethods(['buildProvider'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        Socialite::swap($s);
+
+        if (!class_exists('\Socialite')) {
+            class_alias(Socialite::class, '\Socialite');
+        }
+
+        return $s;
     }
 
     /**
