@@ -62,10 +62,10 @@ return [
          */
         'password_required' => false,
         /*
-         * Generate the username automatically from the user information from
-         * social provider or force user to enter their username
+         * Do users need to provide username before creating account with 
+         * social network credentials?
          */
-        'username_auto'     => true,
+        'username_required' => false,
     ],
     'emails'                => [
         /*

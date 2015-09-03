@@ -114,8 +114,8 @@ trait TakiRegistration
 
     protected function getUserActivatingView()
     {
-        if (property_exists($this, 'activated_view')) {
-            return $this->activated_view;
+        if (property_exists($this, 'activatedView')) {
+            return $this->activatedView;
         } else {
             return 'auth.activate';
         }

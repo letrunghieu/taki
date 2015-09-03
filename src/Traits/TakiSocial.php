@@ -47,7 +47,7 @@ trait TakiSocial
                 'provider'                 => $service,
             ];
 
-            if (config('taki.social.password_required') || !config('taki.social.username_auto')) {
+            if (config('taki.social.password_required') || !config('taki.social.username_required')) {
                 \Taki::saveOauthUser($service, $user->getEmail());
                 return redirect($this->getOauthCompletePath())->with($userInfo);
             } else {

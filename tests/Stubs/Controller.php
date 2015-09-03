@@ -7,7 +7,6 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use HieuLe\Taki\Traits\TakiTrait;
-use HieuLe\Taki\Traits\TakiSocial;
 
 /**
  * A stub controller
@@ -19,7 +18,6 @@ class Controller
 
     use ValidatesRequests,
         ThrottlesLogins,
-        TakiSocial,
         TakiTrait;
 
     protected function throwValidationException(Request $request, $validator)

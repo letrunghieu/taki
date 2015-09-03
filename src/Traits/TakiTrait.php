@@ -1,4 +1,5 @@
 <?php
+
 namespace HieuLe\Taki\Traits;
 
 /**
@@ -8,7 +9,10 @@ namespace HieuLe\Taki\Traits;
  */
 trait TakiTrait
 {
-    use TakiAuthentication, TakiRegistration {
+
+    use TakiAuthentication,
+        TakiRegistration,
+        TakiSocial {
         TakiAuthentication::redirectPath insteadof TakiRegistration;
     }
 }
