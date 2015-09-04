@@ -3,7 +3,9 @@
 A collection of useful traits to make Laravel 5.1 authentication system more flexible.
 
 [![Build Status](https://travis-ci.org/letrunghieu/taki.svg?branch=master)](https://travis-ci.org/letrunghieu/taki)
-[![Latest Stable Version](https://poser.pugx.org/hieu-le/taki/v/stable)](https://packagist.org/packages/hieu-le/taki) [![Total Downloads](https://poser.pugx.org/hieu-le/taki/downloads)](https://packagist.org/packages/hieu-le/taki) [![Latest Unstable Version](https://poser.pugx.org/hieu-le/taki/v/unstable)](https://packagist.org/packages/hieu-le/taki) [![License](https://poser.pugx.org/hieu-le/taki/license)](https://packagist.org/packages/hieu-le/taki)
+[![Code Climate](https://codeclimate.com/github/letrunghieu/taki/badges/gpa.svg)](https://codeclimate.com/github/letrunghieu/taki)
+[![Test Coverage](https://codeclimate.com/github/letrunghieu/taki/badges/coverage.svg)](https://codeclimate.com/github/letrunghieu/taki/coverage)
+[![Latest Stable Version](https://poser.pugx.org/hieu-le/taki/v/stable)](https://packagist.org/packages/hieu-le/taki) [![Total Downloads](https://poser.pugx.org/hieu-le/taki/downloads)](https://packagist.org/packages/hieu-le/taki)  [![License](https://poser.pugx.org/hieu-le/taki/license)](https://packagist.org/packages/hieu-le/taki)
 
 ## Why?
 
