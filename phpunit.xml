@@ -16,7 +16,12 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">app/</directory>
+            <directory suffix=".php">src/</directory>
+            <exclude>
+                <file>src/Traits/TakiTrait.php</file>
+                <file>src/TakiFacade.php</file>
+                <file>src/TakiServiceProvider.php</file>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
